@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: fct_hourly_rides
+    description: Ridership aggregated to the hour -- the forecasting grain.
+    columns:
+      - name: ride_hour
+        description: Hour bucket, Chicago local.
+        data_tests:
+          - unique
+          - not_null
+      - name: rides
+        description: Trips started in this hour.
+        data_tests:
+          - not_null
+      - name: day_of_week
+        description: 0 = Sunday through 6 = Saturday.
+        data_tests:
+          - accepted_values:
+              values: [0, 1, 2, 3, 4, 5, 6]
+              quote: false
+      - name: hour_of_day
+        data_tests:
+          - not_null
+
+  - name: forecast_hourly_demand
+    description: >
+      Seasonal-baseline forecast: expected rides per (weekday, hour) projected
+      forward over the horizon, with a +/-1 sigma band and a confidence score
+      reflecting how much history backs each cell.
+    columns:
+      - name: forecast_date
+        data_tests:
+          - not_null
+      - name: expected_rides
+        data_tests:
+          - not_null
+      - name: confidence
+        description: 0..1 -- observed cells divided by lookback weeks, capped at 1.
+        data_tests:
+          - not_null
+      - name: lower_bound
+        description: Clamped at zero; a negative ride count is not a forecast.
+        data_tests:
+          - not_null
+
+  - name: station_daily_trends
+    description: Per-station daily ridership with rolling mean, WoW change, and daily rank.
+    columns:
+      - name: station
+        data_tests:
+          - not_null
+      - name: ride_date
+        data_tests:
+          - not_null
+      - name: busiest_rank
+        data_tests:
+          - not_null

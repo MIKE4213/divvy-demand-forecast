@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Divvy monthly trip archives, landed verbatim by ingest/ingest.py.
+      Nothing in this schema is transformed -- it is the source of record.
+    tables:
+      - name: trips
+        description: One row per bike trip, as published by Divvy.
+        columns:
+          - name: ride_id
+            description: Divvy's trip identifier. Near-unique; see stg_trips for dedup.
+          - name: started_at
+            description: Trip start timestamp, Chicago local.
+            data_tests:
+              - not_null
+          - name: member_casual
+            description: Rider type at time of trip.
+            data_tests:
+              - accepted_values:
+                  values: ["member", "casual"]
+
+      - name: ingest_log
+        description: >
+          Ingestion watermark -- one row per source month already landed.
+          Makes ingest.py idempotent and re-runnable.
+        columns:
+          - name: source_month
+            data_tests:
+              - unique
+              - not_null

@@ -1,0 +1,11 @@
+# Local-only profile. DuckDB means no warehouse credentials and no cloud
+# account -- clone the repo and `make all` works. The models themselves are
+# ANSI-standard enough to point at Postgres or Snowflake by swapping this file.
+divvy_demand_forecast:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: divvy.duckdb
+      schema: main
+      threads: 4

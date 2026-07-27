@@ -1,0 +1,9 @@
+# Pinned deliberately. dbt-core 2.0.0a introduces a build-time dependency
+# (dbt-core-experimental-parser) that fetches a wheel over the network during
+# metadata generation, which fails behind TLS-inspecting corporate proxies.
+# 1.9.x has no such step and is the current stable line.
+dbt-core~=1.9.0
+dbt-duckdb~=1.9.0
+duckdb~=1.5
+pandas>=2.0
+requests>=2.31

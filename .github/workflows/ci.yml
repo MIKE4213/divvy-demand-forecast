@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Validates every model compiles and the DAG resolves, without paying for
+      # a multi-hundred-megabyte download on each run.
+      - name: dbt parse
+        run: dbt parse --profiles-dir . --project-dir .
+
+      - name: dbt compile
+        run: dbt compile --profiles-dir . --project-dir .
+
+      # One month is enough to exercise the real SQL against real data.
+      - name: Ingest one month
+        run: python ingest/ingest.py --months 1
+
+      - name: Build and test
+        run: |
+          dbt run  --profiles-dir . --project-dir .
+          dbt test --profiles-dir . --project-dir .
