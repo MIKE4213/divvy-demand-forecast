@@ -1,8 +1,8 @@
 # Divvy Demand Forecast
 
 A small, complete analytics pipeline: ingest 1.9M public bike-share trips, model
-them in SQL with dbt, and forecast hourly demand a week out with a stated
-confidence interval.
+them in SQL with dbt, and forecast hourly demand a week out with a ±1σ
+uncertainty band.
 
 I built a seasonal call-arrival forecast in production at work, in MongoDB's
 aggregation framework, against data I can't share. This is the same method
@@ -43,7 +43,7 @@ Weekends have a different shape entirely — no commute peaks, one broad midday
 hump:
 
 ```
-date         day   peak hour   expected          80% band   confidence
+date         day   peak hour   expected          ±1σ band   confidence
 2026-07-01   Wed       17:00      2,535     1,804 – 3,267        1.00
 2026-07-03   Fri       17:00      2,522     1,993 – 3,050        1.00
 2026-07-04   Sat       15:00      2,498     2,105 – 2,890        1.00
